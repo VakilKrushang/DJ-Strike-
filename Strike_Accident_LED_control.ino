@@ -1,31 +1,54 @@
-// Pin 13 has an LED connected on most Arduino boards.
-// Pin 11 has the LED on Teensy 2.0
-// Pin 6  has the LED on Teensy++ 2.0
-// Pin 13 has the LED on Teensy 3.0
-// give it a name:
-int led = 13;
+int buzzer = 8;
+int LED = 9;
+int i;
+# define analog_pin 0
+float sensor_value;
+#include <LiquidCrystal.h>
+const int rs = 2, en = 3, d4 = 4, d5 = 5, d6 = 6, d7 = 7;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
-// the setup routine runs once when you press reset:
-void setup() {
-  // initialize the digital pin as an output.
-  pinMode(led, OUTPUT);
-  Serial.begin(9600);
-   digitalWrite(led,LOW);
+void setup() 
+{
+  pinMode(buzzer,OUTPUT);
+  pinMode(3,OUTPUT);
+  Serial.begin(9600); 
 }
-
 // the loop routine runs over and over again forever:
-void loop() {
-//  while(1)
-//  {
- 
+void loop() 
+{
+    sensor_value = analogRead(analog_pin);
+    Serial.println(sensor_value);
+    
+    if( sensor_value>450) 
+    {
+      digitalWrite(buzzer,HIGH);
+      lcd.begin(16, 2);
+      lcd.print("The Driver is ");
+      lcd.setCursor(2, 1);
+      lcd.print("Drunk");
+      digitalWrite(LED,HIGH);
+    }
+    else {
+      digitalWrite(buzzer,LOW);
+      lcd.begin(16, 2);
+      lcd.print("DRIVE SAFElY");
+      digitalWrite(LED,LOW);
+    }
   char input = Serial.read();
   if(input == '1')
-  {
-   digitalWrite(led, HIGH);
+  {   
+      digitalWrite(LED,HIGH);
+      digitalWrite(buzzer,HIGH);
+      lcd.begin(16, 2);
+      lcd.print("CAUTION");
+      lcd.setCursor(2, 1);
+      lcd.print("DRIVER ASLEEP");    
   }
-  if(input=='0')
-  { 
-    digitalWrite(led, LOW);
-  }
-//  } // wait for a second
+if(input == '0')
+{
+      digitalWrite(buzzer,LOW);
+      lcd.begin(16, 2);
+      lcd.print("DRIVE SAFElY");
+      digitalWrite(LED,LOW);   
+}
 }
